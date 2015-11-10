@@ -4,27 +4,21 @@
 public class Robot {
     public static class RobotEx extends Thread{
         private String name;
+        static final Object lock=new Object();
         public RobotEx(String name){
             this.name=name;
         }
         @Override
         public void run(){
             for(;;){
-                try {
+                synchronized (lock){
+                    step();
+                    lock.notify();
                     try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                    join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                step();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
